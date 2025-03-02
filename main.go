@@ -41,6 +41,7 @@ func main() {
 
 	personKey := fmt.Sprintf("person:%s", personID)
 	err = client.Set(context.Background(), personKey, jsonString, 1000*time.Second).Err()
+
 	if err != nil {
 		fmt.Println("Failed to set value", err.Error())
 		return
@@ -49,7 +50,11 @@ func main() {
 	}
 
 	val, err := client.Get(context.Background(), personKey).Result()
-	if err != nil {
+
+	if err == redis.Nil {
+		fmt.Printf("%s does not exist \n", personKey)
+		return
+	} else if err != nil {
 		fmt.Println("Failed to get value", err.Error())
 		return
 	}
